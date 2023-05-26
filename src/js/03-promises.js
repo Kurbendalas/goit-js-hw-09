@@ -1,5 +1,5 @@
 document.querySelector('.form').addEventListener('submit', handleSubmit);
-
+import Notiflix from 'notiflix';
 function handleSubmit(event) {
   event.preventDefault();
 
