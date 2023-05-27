@@ -1,5 +1,6 @@
 document.querySelector('.form').addEventListener('submit', handleSubmit);
 import Notiflix from 'notiflix';
+
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -11,10 +12,6 @@ function handleSubmit(event) {
   const step = Number(stepInput.value);
   const amount = Number(amountInput.value);
 
-  createPromises(delay, step, amount);
-}
-
-function createPromises(delay, step, amount) {
   let currentDelay = delay;
 
   for (let i = 1; i <= amount; i++) {
