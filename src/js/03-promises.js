@@ -29,6 +29,11 @@ function handleSubmit(event) {
 
     currentDelay += step;
   }
+
+  // Reset input fields after promises are created
+  delayInput.value = '';
+  stepInput.value = '';
+  amountInput.value = '';
 }
 
 function createPromise(position, delay) {
