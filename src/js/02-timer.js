@@ -9,7 +9,7 @@ function addLeadingZero(value) {
 
 // Елементи інтерфейсу
 const datetimePicker = document.getElementById('datetime-picker');
-const startButton = document.querySelector('[data-start]');
+const startButton = document.getElementById('start-button');
 const daysElement = document.querySelector('[data-days]');
 const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
@@ -19,26 +19,46 @@ const secondsElement = document.querySelector('[data-seconds]');
 let countdownIntervalId = null;
 let countdownEndDate = null;
 
-// Обробник події при виборі дати і часу
-datetimePicker.addEventListener('change', () => {
-  const selectedDate = new Date(datetimePicker.value);
-  const currentDate = new Date();
+// Функція для установки даты окончания обратного отсчета
+function setCountdownEndDate(dateString) {
+  countdownEndDate = new Date(dateString);
+}
 
-  // Перевірка чи вибрана дата є в майбутньому
-  if (selectedDate <= currentDate) {
-    window.alert('Please choose a date in the future');
-    startButton.disabled = true;
-  } else {
-    startButton.disabled = false;
-    countdownEndDate = selectedDate;
-  }
+// Функція для запуска обратного отсчета
+function startCountdown() {
+  countdownIntervalId = setInterval(updateCountdown, 1000);
+  updateCountdown();
+}
+
+// Функція для остановки обратного отсчета
+function stopCountdown() {
+  clearInterval(countdownIntervalId);
+}
+
+// Обробник події при виборі дати і часу
+flatpickr(datetimePicker, {
+  enableTime: true,
+  dateFormat: 'Y-m-d H:i',
+  minDate: 'today',
+  onChange: function (selectedDates, dateStr) {
+    const selectedDate = new Date(dateStr);
+    const currentDate = new Date();
+
+    // Перевірка чи вибрана дата є в майбутньому
+    if (selectedDate <= currentDate) {
+      window.alert('Please choose a date in the future');
+      startButton.disabled = true;
+    } else {
+      startButton.disabled = false;
+      setCountdownEndDate(dateStr);
+    }
+  },
 });
 
 // Обробник події при натисканні кнопки "Start"
 startButton.addEventListener('click', () => {
   startButton.disabled = true;
-  countdownIntervalId = setInterval(updateCountdown, 1000);
-  updateCountdown();
+  startCountdown();
 });
 
 // Оновлення значень таймера
@@ -54,7 +74,7 @@ function updateCountdown() {
 
   // Перевірка чи досягнуто кінцевої дати
   if (diff <= 0) {
-    clearInterval(countdownIntervalId);
+    stopCountdown();
     startButton.disabled = false;
   }
 }
