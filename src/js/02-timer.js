@@ -24,11 +24,33 @@ function setCountdownEndDate(dateString) {
 function startCountdown() {
   countdownIntervalId = setInterval(updateCountdown, 1000);
   updateCountdown();
+  datetimePicker.disabled = true;
+  resetButton.style.display = 'none';
 }
 
 function stopCountdown() {
   clearInterval(countdownIntervalId);
+  datetimePicker.disabled = false;
+  resetButton.style.display = 'block';
 }
+
+function resetCountdown() {
+  clearInterval(countdownIntervalId);
+  countdownEndDate = null;
+  daysElement.textContent = '00';
+  hoursElement.textContent = '00';
+  minutesElement.textContent = '00';
+  secondsElement.textContent = '00';
+  datetimePicker.disabled = false;
+  resetButton.style.display = 'none';
+}
+
+const resetButton = document.createElement('button');
+resetButton.textContent = 'Reset';
+resetButton.style.display = 'none';
+resetButton.addEventListener('click', resetCountdown);
+
+document.body.appendChild(resetButton);
 
 flatpickr(datetimePicker, {
   enableTime: true,
@@ -50,16 +72,19 @@ flatpickr(datetimePicker, {
 function updateCountdown() {
   const currentDate = new Date();
   const diff = getMillisecondsDiff(countdownEndDate, currentDate);
+
+  if (diff <= 0) {
+    stopCountdown();
+    resetCountdown(); // Optionally reset the countdown after reaching 00:00:00:00
+    return;
+  }
+
   const { days, hours, minutes, seconds } = convertMs(diff);
 
   daysElement.textContent = addLeadingZero(days);
   hoursElement.textContent = addLeadingZero(hours);
   minutesElement.textContent = addLeadingZero(minutes);
   secondsElement.textContent = addLeadingZero(seconds);
-
-  if (diff <= 0) {
-    stopCountdown();
-  }
 }
 
 function convertMs(ms) {
@@ -75,3 +100,6 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+
+// Показать кнопку Reset
+resetButton.style.display = 'block';

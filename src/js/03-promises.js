@@ -1,6 +1,3 @@
-document.querySelector('.form').addEventListener('submit', handleSubmit);
-import Notiflix from 'notiflix';
-
 function handleSubmit(event) {
   event.preventDefault();
 
@@ -11,6 +8,11 @@ function handleSubmit(event) {
   const delay = Number(delayInput.value);
   const step = Number(stepInput.value);
   const amount = Number(amountInput.value);
+
+  if (step < 0 || delay < 0 || amount <= 0) {
+    Notiflix.Notify.failure('Invalid input values');
+    return;
+  }
 
   let currentDelay = delay;
 
@@ -34,18 +36,4 @@ function handleSubmit(event) {
   delayInput.value = '';
   stepInput.value = '';
   amountInput.value = '';
-}
-
-function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const shouldResolve = Math.random() > 0.3;
-
-      if (shouldResolve) {
-        resolve({ position, delay });
-      } else {
-        reject({ position, delay });
-      }
-    }, delay);
-  });
 }
