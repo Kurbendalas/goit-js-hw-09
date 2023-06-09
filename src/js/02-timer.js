@@ -1,3 +1,5 @@
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 function getMillisecondsDiff(date1, date2) {
   return Math.abs(date1 - date2);
 }
@@ -6,14 +8,13 @@ function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
 
-// Elements in the interface
 const datetimePicker = document.getElementById('datetime-picker');
 const daysElement = document.querySelector('[data-days]');
 const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
+const startButton = document.getElementById('start-button');
 
-// Initial values
 let countdownIntervalId = null;
 let countdownEndDate = null;
 
@@ -25,13 +26,13 @@ function startCountdown() {
   countdownIntervalId = setInterval(updateCountdown, 1000);
   updateCountdown();
   datetimePicker.disabled = true;
-  resetButton.style.display = 'none';
+  startButton.disabled = true;
 }
 
 function stopCountdown() {
   clearInterval(countdownIntervalId);
   datetimePicker.disabled = false;
-  resetButton.style.display = 'block';
+  startButton.disabled = false;
 }
 
 function resetCountdown() {
@@ -42,26 +43,21 @@ function resetCountdown() {
   minutesElement.textContent = '00';
   secondsElement.textContent = '00';
   datetimePicker.disabled = false;
-  resetButton.style.display = 'none';
+  startButton.disabled = false;
 }
 
-const resetButton = document.createElement('button');
-resetButton.textContent = 'Reset';
-resetButton.style.display = 'none';
-resetButton.addEventListener('click', resetCountdown);
-
-document.body.appendChild(resetButton);
-
-flatpickr(datetimePicker, {
+const flatpickrInstance = flatpickr(datetimePicker, {
   enableTime: true,
   dateFormat: 'Y-m-d H:i',
   minDate: 'today',
+  defaultDate: new Date(),
   onChange: function (selectedDates, dateStr) {
     const selectedDate = new Date(dateStr);
     const currentDate = new Date();
 
     if (selectedDate <= currentDate) {
-      window.alert('Please choose a date in the future');
+      alert('Please choose a date in the future');
+      datetimePicker.value = '';
     } else {
       setCountdownEndDate(dateStr);
       startCountdown();
@@ -75,7 +71,8 @@ function updateCountdown() {
 
   if (diff <= 0) {
     stopCountdown();
-    resetCountdown(); // Optionally reset the countdown after reaching 00:00:00:00
+    resetCountdown();
+    alert('Countdown completed');
     return;
   }
 
@@ -100,6 +97,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-// Показать кнопку Reset
-resetButton.style.display = 'block';
