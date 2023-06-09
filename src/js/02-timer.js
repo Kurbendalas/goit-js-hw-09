@@ -51,7 +51,7 @@ const flatpickrInstance = flatpickr(datetimePicker, {
   dateFormat: 'Y-m-d H:i',
   minDate: 'today',
   defaultDate: new Date(),
-  onChange: function (selectedDates, dateStr) {
+  onClose: function (selectedDates, dateStr) {
     const selectedDate = new Date(dateStr);
     const currentDate = new Date();
 
